@@ -2,20 +2,31 @@ import { useState, useMemo } from 'react';
 import TaskItem from './TaskItem';
 import { useTheme } from '../contexts/ThemeContext';
 
-function TaskList({ tasks, onToggle, onDelete, onEdit, checkAdmin }) {
+function TaskList({ tasks, onToggle, onDelete, onEdit, checkAdmin}) {
   const [filter, setFilter] = useState('all');
   const { isDarkMode } = useTheme();
 
-  const filteredTasks = useMemo(() => {
+ const filteredTasks = useMemo(() => {
+    let filtered;
+
     switch (filter) {
       case 'active':
-        return tasks.filter(task => !task.completed);
+        filtered = tasks.filter(task => !task.completed);
+        break;
       case 'completed':
-        return tasks.filter(task => task.completed);
+        filtered = tasks.filter(task => task.completed);
+        break;
       default:
-        return tasks;
+        filtered = tasks;
     }
-  }, [tasks, filter]);
+
+    if (!checkAdmin) {
+      filtered = filtered.filter(task => task.priority !== 'high');
+    }
+
+    return filtered;
+  }, [tasks, filter, checkAdmin]);
+
 
   const stats = useMemo(() => ({
     total: tasks.length,
@@ -61,6 +72,7 @@ function TaskList({ tasks, onToggle, onDelete, onEdit, checkAdmin }) {
         >
           Active ({stats.active})
         </button>
+        {checkAdmin &&
         <button
           onClick={() => setFilter('completed')}
           style={{
@@ -75,7 +87,9 @@ function TaskList({ tasks, onToggle, onDelete, onEdit, checkAdmin }) {
         >
           Completed ({stats.completed})
         </button>
+        }
       </div>
+      
 
       {filteredTasks.length === 0 ? (
         <div style={{
@@ -97,7 +111,7 @@ function TaskList({ tasks, onToggle, onDelete, onEdit, checkAdmin }) {
               onToggle={onToggle}
               onDelete={onDelete}
               onEdit={onEdit}
-              checkAdmin={isAdmin}
+              checkAdmin={checkAdmin}
 
             />
           ))}

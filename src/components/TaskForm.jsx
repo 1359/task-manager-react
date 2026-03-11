@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useState, useRef } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
-function TaskForm({ onAddTask }) {
-  const [taskText, setTaskText] = useState('');
-  const [priority, setPriority] = useState('medium');
+function TaskForm({ onAddTask, checkAdmin }) {
+  const [taskText, setTaskText] = useState("");
+  const [priority, setPriority] = useState("medium");
   const inputRef = useRef(null);
   const { isDarkMode } = useTheme();
 
@@ -16,11 +16,11 @@ function TaskForm({ onAddTask }) {
         text: taskText,
         priority,
         completed: false,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
 
-      setTaskText('');
-      setPriority('medium');
+      setTaskText("");
+      setPriority("medium");
       inputRef.current.focus();
     }
   };
@@ -29,13 +29,13 @@ function TaskForm({ onAddTask }) {
     <form
       onSubmit={handleSubmit}
       style={{
-        padding: '20px',
-        background: isDarkMode ? '#2c2c2c' : '#f5f5f5',
-        borderRadius: '8px',
-        marginBottom: '20px'
+        padding: "20px",
+        background: isDarkMode ? "#2c2c2c" : "#f5f5f5",
+        borderRadius: "8px",
+        marginBottom: "20px",
       }}
     >
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: "10px" }}>
         <input
           ref={inputRef}
           type="text"
@@ -43,45 +43,45 @@ function TaskForm({ onAddTask }) {
           onChange={(e) => setTaskText(e.target.value)}
           placeholder="Enter a new task..."
           style={{
-            width: '100%',
-            padding: '10px',
-            fontSize: '16px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            color: isDarkMode ? '#fff' : '#000',
-            background: isDarkMode ? '#444' : '#fff'
+            width: "100%",
+            padding: "10px",
+            fontSize: "16px",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            color: isDarkMode ? "#fff" : "#000",
+            background: isDarkMode ? "#444" : "#fff",
           }}
         />
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-        <label style={{ color: isDarkMode ? '#fff' : '#000' }}>Priority:</label>
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <label style={{ color: isDarkMode ? "#fff" : "#000" }}>Priority:</label>
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
           style={{
-            padding: '8px',
-            borderRadius: '4px',
-            border: '1px solid #ddd',
-            color: isDarkMode ? '#fff' : '#000',
-            background: isDarkMode ? '#444' : '#fff'
+            padding: "8px",
+            borderRadius: "4px",
+            border: "1px solid #ddd",
+            color: isDarkMode ? "#fff" : "#000",
+            background: isDarkMode ? "#444" : "#fff",
           }}
         >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
-          <option value="high">High</option>
+          {checkAdmin && <option value="high">High</option>}
         </select>
 
         <button
           type="submit"
           style={{
-            padding: '8px 20px',
-            background: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '16px'
+            padding: "8px 20px",
+            background: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "16px",
           }}
         >
           Add Task
