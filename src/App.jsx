@@ -13,6 +13,9 @@ function AppContent() {
   const { isDarkMode } = useTheme();
   const teacherFamily = "Moqaddasi";
   const [statusButton, setStatusButton] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [isFiltering, setIsFiltering] = useState(false);
 
   useEffect(() => {
     const savedTasks = localStorage.getItem("taskManagerTasks");
@@ -24,21 +27,33 @@ function AppContent() {
 
   useEffect(() => {
     const completedTask = tasks.filter((t) => t.completed).length;
-    //console.log("App mounted! Total tasks:", tasks.length);
     document.title = `${tasks.length} tasks),completedTask:${completedTask}`;
     if (tasks.length > 0) {
       localStorage.setItem("taskManagerTasks", JSON.stringify(tasks));
     }
     console.log("tasks:", tasks);
 
-    return () => {
-      //console.log("App unmounting...");
-    };
+    return () => {};
   }, [tasks]);
 
+  useEffect(() => {}, [isDarkMode]);
+
   useEffect(() => {
-    // isDarkMode ? console.log("Dark mode") : console.log("Light mode");
-  }, [isDarkMode]);
+    setIsFiltering(true);
+    const timeout = setTimeout(() => {
+      if (searchTerm.trim() === "") {
+        setFilteredTasks(tasks);
+      } else {
+        const result = tasks.filter((task) =>
+          task.text.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        setFilteredTasks(result);
+      }
+      setIsFiltering(false);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [searchTerm, tasks]);
 
   const handleAddTask = useCallback(
     (newTask) => {
@@ -107,14 +122,21 @@ function AppContent() {
         />
 
         <div style={{ padding: "20px" }}>
-          <TaskForm onAddTask={handleAddTask} checkAdmin={isAdmin} />
+          <TaskForm
+            onAddTask={handleAddTask}
+            checkAdmin={isAdmin}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            isFiltering={isFiltering}
+          />
 
           <TaskList
-            tasks={tasks}
+            tasks={filteredTasks}
             onToggle={handleToggleTask}
             onDelete={handleDeleteTask}
             onEdit={handleEditTask}
             checkAdmin={isAdmin}
+            searchTerm={searchTerm}
           />
         </div>
       </div>

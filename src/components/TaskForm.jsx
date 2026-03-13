@@ -1,7 +1,13 @@
 import { useState, useRef } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 
-function TaskForm({ onAddTask, checkAdmin }) {
+function TaskForm({
+  onAddTask,
+  checkAdmin,
+  searchTerm,
+  setSearchTerm,
+  isFiltering,
+}) {
   const [taskText, setTaskText] = useState("");
   const [priority, setPriority] = useState("medium");
   const inputRef = useRef(null);
@@ -35,6 +41,25 @@ function TaskForm({ onAddTask, checkAdmin }) {
         marginBottom: "20px",
       }}
     >
+      <div style={{ marginBottom: "10px" }}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search tasks..."
+          style={{
+            width: "100%",
+            padding: "10px",
+            fontSize: "16px",
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+            color: isDarkMode ? "#fff" : "#000",
+            background: isDarkMode ? "#444" : "#fff",
+          }}
+        />
+        {isFiltering && <p> Is filtering...</p>}
+      </div>
+
       <div style={{ marginBottom: "10px" }}>
         <input
           ref={inputRef}
